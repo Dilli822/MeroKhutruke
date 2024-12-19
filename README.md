@@ -1,6 +1,6 @@
-## MreoKhutruke - Expense and Income Tracker
+## MeroKhutruke - Expense and Income Tracker
 
-**MreoKhutruke** is a simple financial app for tracking personal expenses and income. Stay organized and take control of your finances with ease!
+**MeroKhutruke** is a simple financial app for tracking personal expenses and income. Stay organized and take control of your finances with ease!
 
 ---
 
