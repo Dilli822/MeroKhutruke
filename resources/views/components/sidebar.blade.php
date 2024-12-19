@@ -4,14 +4,16 @@
             <div class="sidebar-brand">
                 <a href="#">
                     <span style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">Mero Khutruke</span>
+                    <span style="font-size: 10px!important; text-transform: lowercase!important;">{{ Auth::user()->email }}</span>
                 </a>
+              
             </div>
             <ul class="sidebar-menu">
                 <li class="menu-header"></li>
                 
                 <!-- Dashboard Section -->
                 <li class="dropdown santo">
-                    <a href="#" class="nav-link"><i data-feather="home"></i><span style="color: midnightblue">Dashboard</span></a>
+                    <a href="{{ route('financial.index') }}" class="nav-link"><i data-feather="home"></i><span style="color: midnightblue">Dashboard</span></a>
                 </li>
                 
                 <!-- Profile Section -->
@@ -36,10 +38,10 @@
                         <i data-feather="minus-circle"></i><span>Expense</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="nav-link" href="{{ route('expenses_final.create') }}">Transportation</a></li>
-                        <li><a class="nav-link" href="{{ route('expenses_final.create') }}">Shopping</a></li>
-                        <li><a class="nav-link" href="{{ route('expenses_final.create') }}">Fooding</a></li>
-                        <li><a class="nav-link" href="{{ route('expenses_final.create') }}">Refreshment</a></li>
+                        <li><a class="nav-link" href="{{ route('expenses.create') }}">Transportation</a></li>
+                        <li><a class="nav-link" href="{{ route('expenses.create') }}">Shopping</a></li>
+                        <li><a class="nav-link" href="{{ route('expenses.create') }}">Fooding</a></li>
+                        <li><a class="nav-link" href="{{ route('expenses.create') }}">Refreshment</a></li>
                     </ul>
                 </li>
 
@@ -47,8 +49,8 @@
                 <li class="dropdown santo">
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="arrow-right-circle"></i><span>Transfer</span></a>
                     <ul class="dropdown-menu">
-                        <li><a class="nav-link" href="#">Bank-to-Bank Transfer</a></li>
-                        <li><a class="nav-link" href="#">Cash-to-Cash Transfers</a></li>
+                        <li><a class="nav-link" href="{{ route('transfers.create') }} ">Bank-to-Bank Transfer</a></li>
+                        <li><a class="nav-link" href="{{ route('transfers.create') }}">Cash-to-Cash Transfers</a></li>
                     </ul>
                 </li>
 
@@ -62,7 +64,7 @@
 
                 <!-- Statistics Section -->
                 <li class="dropdown santo">
-                    <a href="#" class="nav-link"><i data-feather="globe"></i><span style="color: midnightblue">Transactions</span></a>
+                    <a href="{{ route('financial.indexAll') }}" class="nav-link"><i data-feather="globe"></i><span style="color: midnightblue">Transactions</span></a>
                 </li>
             </ul>
         </aside>

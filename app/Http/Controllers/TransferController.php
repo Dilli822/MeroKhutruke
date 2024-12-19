@@ -7,39 +7,64 @@ use Illuminate\Http\Request;
 
 class TransferController extends Controller
 {
-    // Display the form to create a new transfer
+    /**
+     * Display the form to create a new transfer.
+     */
     public function create()
     {
         return view('transfers.create');
     }
 
-    // Store the transfer record in the database
+    /**
+     * Store a new transfer record in the database.
+     */
     public function store(Request $request)
     {
-        // Validate the inputs
-        $request->validate([
-            'cash_to_cash' => 'nullable|numeric',  // Validate as a numeric value
-            'bank_to_bank' => 'nullable|numeric',  // Validate as a numeric value
+        // Validate input data
+        $validated = $request->validate([
+            'cash_to_cash' => 'nullable|numeric|min:0', // Optional, must be numeric and non-negative
+            'bank_to_bank' => 'nullable|numeric|min:0', // Optional, must be numeric and non-negative
         ]);
 
-        // Create a new Transfer record with default values if fields are empty
-        $transfer = new Transfer();
+        // Create a transfer for the authenticated user
+        Transfer::create(array_merge($validated, ['user_id' => auth()->id()]));
 
-        // Default values for cash_to_cash and bank_to_bank
-        $transfer->cash_to_cash = $request->input('cash_to_cash', 0.00);
-        $transfer->bank_to_bank = $request->input('bank_to_bank', 0.00);
-
-        // Save the transfer record to the database
-        $transfer->save();
-
-        // Redirect back with a success message
+        // Redirect with a success message
         return redirect()->route('transfers.create')->with('success', 'Transfer record created successfully!');
     }
 
-    // Show the list of transfers (Optional)
+    /**
+     * Display a list of all transfers for the authenticated user.
+     */
     public function index()
     {
-        $transfers = Transfer::all();
-        return view('transfers.create', compact('transfers'));
+        // Fetch transfers for the authenticated user
+        $transfers = Transfer::where('user_id', auth()->id())->get();
+
+        return view('transfers.index', compact('transfers'));
+    }
+
+    /**
+     * Show details of a specific transfer.
+     */
+    public function show($id)
+    {
+        // Fetch transfer belonging to the authenticated user
+        $transfer = Transfer::where('user_id', auth()->id())->findOrFail($id);
+
+        return view('transfers.show', compact('transfer'));
+    }
+
+    /**
+     * Delete a specific transfer record.
+     */
+    public function destroy($id)
+    {
+        // Fetch and delete the transfer belonging to the authenticated user
+        $transfer = Transfer::where('user_id', auth()->id())->findOrFail($id);
+
+        $transfer->delete();
+
+        return redirect()->route('transfers.create')->with('success', 'Transfer record deleted successfully!');
     }
 }

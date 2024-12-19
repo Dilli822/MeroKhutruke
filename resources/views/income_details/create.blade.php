@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Income Details</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         // Function to toggle the input fields based on the selected option
         function toggleFields() {
@@ -12,106 +12,124 @@
             var salaryField = document.getElementById('income_salary');
             var investmentField = document.getElementById('income_investment');
 
-            // Reset the borders to default when switching between fields
-            salaryField.classList.remove('border-red-500');
-            investmentField.classList.remove('border-red-500');
+            // Reset field validation and states
+            salaryField.classList.remove('is-invalid');
+            investmentField.classList.remove('is-invalid');
 
-            // Show/hide fields based on the selected type
+            // Enable/Disable fields based on selection
             if (selectedValue === 'salary') {
                 salaryField.disabled = false;
                 investmentField.disabled = true;
-                investmentField.classList.add('border-red-500');
+                investmentField.classList.add('is-invalid');
+                investmentField.value = '0.00';
             } else if (selectedValue === 'investment') {
                 investmentField.disabled = false;
                 salaryField.disabled = true;
-                salaryField.classList.add('border-red-500');
+                salaryField.classList.add('is-invalid');
+                salaryField.value = '0.00';
             } else {
                 salaryField.disabled = true;
                 investmentField.disabled = true;
-                salaryField.classList.add('border-red-500');
-                investmentField.classList.add('border-red-500');
+                salaryField.classList.add('is-invalid');
+                investmentField.classList.add('is-invalid');
+                salaryField.value = '0.00';
+                investmentField.value = '0.00';
             }
         }
 
         // Function to show success message for 3 seconds
         function showSuccessMessage() {
             var messageDiv = document.getElementById('messageDiv');
-            messageDiv.style.display = 'block';
+            messageDiv.classList.remove('d-none');
             setTimeout(function() {
-                messageDiv.style.display = 'none';
-            }, 3000); // 3 seconds
+                messageDiv.classList.add('d-none');
+            }, 3000);
         }
 
-        // Ensure only one input field is enabled on page load
+        // Ensure only one input field is enabled on page load with default values set to 0.00
         window.onload = function () {
-            document.getElementById('income_salary').disabled = true;
-            document.getElementById('income_investment').disabled = true;
+            var salaryField = document.getElementById('income_salary');
+            var investmentField = document.getElementById('income_investment');
+
+            // Set default values to 0.00
+            salaryField.value = '0.00';
+            investmentField.value = '0.00';
+
+            // Disable the fields
+            salaryField.disabled = true;
+            investmentField.disabled = true;
         }
     </script>
 </head>
-<body class="bg-gray-100 py-10">
 
-    <div class="max-w-lg mx-auto bg-white p-6 rounded-md shadow-lg">
-        <h1 class="text-2xl font-semibold text-center mb-4">Create Income Details</h1>
+<body class="bg-light py-5">
+<x-app-layout>
+    <div class="container">
+        <div class="card mx-auto shadow" style="max-width: 500px;">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create Income Details</h2>
 
-        <!-- Success Message -->
-        @if(session('success'))
-            <div id="messageDiv" class="text-green-500 mb-4 text-center p-4 bg-green-100 border-l-4 border-green-500 rounded hidden">
-                {{ session('success') }}
+                <!-- Success Message -->
+                @if(session('success'))
+                    <div id="messageDiv" class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
+                    <script>
+                        showSuccessMessage();
+                    </script>
+                @endif
+
+                <!-- Error Messages -->
+                @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <!-- Form for Adding Income Details -->
+                <form action="{{ route('income_details.store') }}" method="POST">
+                    @csrf
+
+                    <!-- Select Field for Choosing Income Type -->
+                    <div class="mb-3">
+                        <label for="income_type" class="form-label">Select Income Type:</label>
+                        <select id="income_type" name="income_type" class="form-select" onchange="toggleFields()" required>
+                            <option value="">-- Select --</option>
+                            <option value="salary">Salary</option>
+                            <option value="investment">Investment</option>
+                        </select>
+                    </div>
+
+                    <!-- Salary Field -->
+                    <div class="mb-3">
+                        <label for="income_salary" class="form-label">Salary:</label>
+                        <input type="number" name="income_salary" id="income_salary" step="0.01" value="{{ old('income_salary') }}" 
+                            class="form-control" min="0" disabled>
+                    </div>
+
+                    <!-- Investment Field -->
+                    <div class="mb-3">
+                        <label for="income_investment" class="form-label">Investment:</label>
+                        <input type="number" name="income_investment" id="income_investment" step="0.01" value="{{ old('income_investment') }}" 
+                            class="form-control" min="0" disabled>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
             </div>
-            <script>
-                // Show success message when it's available
-                showSuccessMessage();
-            </script>
-        @endif
-
-        <!-- Error Messages -->
-        @if($errors->any())
-            <div class="text-red-500 mb-4">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <!-- Form for Adding Income Details -->
-        <form action="{{ route('income_details.store') }}" method="POST">
-            @csrf
-
-            <!-- Select Field for Choosing Income Type -->
-            <div class="mb-4">
-                <label for="income_type" class="block text-sm font-medium text-gray-700">Select Income Type:</label>
-                <select id="income_type" name="income_type" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" onchange="toggleFields()" required>
-                    <option value="">-- Select --</option>
-                    <option value="salary">Salary</option>
-                    <option value="investment">Investment</option>
-                </select>
-            </div>
-
-            <!-- Salary Field -->
-            <div class="mb-4">
-                <label for="income_salary" class="block text-sm font-medium text-gray-700">Salary:</label>
-                <input type="number" name="income_salary" id="income_salary" step="0.01" value="{{ old('income_salary') }}" 
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" min="0" disabled>
-            </div>
-
-            <!-- Investment Field -->
-            <div class="mb-4">
-                <label for="income_investment" class="block text-sm font-medium text-gray-700">Investment:</label>
-                <input type="number" name="income_investment" id="income_investment" step="0.01" value="{{ old('income_investment') }}" 
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" min="0" disabled>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="mt-4">
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
-                    Submit
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+</x-app-layout>

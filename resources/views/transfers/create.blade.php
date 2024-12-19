@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Transfer</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Dashboard | Create Transfer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         // JavaScript function to toggle the visibility of fields based on selected option
         function toggleFields() {
@@ -44,69 +45,72 @@
         };
     </script>
 </head>
-<body class="bg-gray-100 py-10">
+<body class="bg-light py-5">
+<x-app-layout>
+<div class="container">
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Create Transfer</h2>
 
-    <div class="max-w-lg mx-auto bg-white p-6 rounded-md shadow-lg">
-        <h1 class="text-2xl font-semibold text-center mb-4">Create Transfer</h1>
+            <!-- Success Message -->
+            @if(session('success'))
+                <div class="alert alert-success text-center success-message">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-        <!-- Success Message -->
-        @if(session('success'))
-            <p class="success-message text-green-500 mb-4 text-center p-4 bg-green-100 border-l-4 border-green-500 rounded">
-                {{ session('success') }}
-            </p>
-        @endif
+            <!-- Error Messages -->
+            @if($errors->any())
+                <div class="alert alert-danger error-message">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        <!-- Error Messages -->
-        @if($errors->any())
-            <div class="error-message mb-4">
-                <ul class="text-red-500">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+            <form action="{{ route('transfers.store') }}" method="POST">
+                @csrf
 
-        <form action="{{ route('transfers.store') }}" method="POST">
-            @csrf
-
-            <!-- Radio Buttons to select transfer type -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Select Transfer Type:</label>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center">
-                        <input type="radio" id="cash_to_cash_radio" name="transfer_type" value="cash_to_cash" onclick="toggleFields()" checked>
-                        <label for="cash_to_cash_radio" class="ml-2">Cash to Cash</label>
+                <!-- Radio Buttons to select transfer type -->
+                <div class="mb-3">
+                    <label class="form-label">Select Transfer Type:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="cash_to_cash_radio" name="transfer_type" value="cash_to_cash" onclick="toggleFields()" checked>
+                        <label class="form-check-label" for="cash_to_cash_radio">Cash to Cash</label>
                     </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="bank_to_bank_radio" name="transfer_type" value="bank_to_bank" onclick="toggleFields()">
-                        <label for="bank_to_bank_radio" class="ml-2">Bank to Bank</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="bank_to_bank_radio" name="transfer_type" value="bank_to_bank" onclick="toggleFields()">
+                        <label class="form-check-label" for="bank_to_bank_radio">Bank to Bank</label>
                     </div>
                 </div>
-            </div>
 
-            <!-- Cash to Cash Field (initially visible) -->
-            <div class="mb-4" id="cash_to_cash_field" style="display: block;">
-                <label for="cash_to_cash" class="block text-sm font-medium text-gray-700">Cash to Cash:</label>
-                <input type="number" name="cash_to_cash" id="cash_to_cash" step="0.01" value="{{ old('cash_to_cash', 0.00) }}" 
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" min="0">
-            </div>
+                <!-- Cash to Cash Field (initially visible) -->
+                <div class="mb-3" id="cash_to_cash_field" style="display: block;">
+                    <label for="cash_to_cash" class="form-label">Cash to Cash:</label>
+                    <input type="number" name="cash_to_cash" id="cash_to_cash" step="0.01" value="{{ old('cash_to_cash', 0.00) }}" 
+                        class="form-control" min="0">
+                </div>
 
-            <!-- Bank to Bank Field (hidden initially) -->
-            <div class="mb-4" id="bank_to_bank_field" style="display: none;">
-                <label for="bank_to_bank" class="block text-sm font-medium text-gray-700">Bank to Bank:</label>
-                <input type="number" name="bank_to_bank" id="bank_to_bank" step="0.01" value="{{ old('bank_to_bank', 0.00) }}" 
-                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" min="0">
-            </div>
+                <!-- Bank to Bank Field (hidden initially) -->
+                <div class="mb-3" id="bank_to_bank_field" style="display: none;">
+                    <label for="bank_to_bank" class="form-label">Bank to Bank:</label>
+                    <input type="number" name="bank_to_bank" id="bank_to_bank" step="0.01" value="{{ old('bank_to_bank', 0.00) }}" 
+                        class="form-control" min="0">
+                </div>
 
-            <!-- Submit Button -->
-            <div class="mt-4">
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
-                    Submit Transfer
-                </button>
-            </div>
-        </form>
+                <!-- Submit Button -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Transfer</button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+    </x-app-layout>

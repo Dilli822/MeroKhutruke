@@ -65,12 +65,12 @@
                                      class="user-img-radious-style">
                             @else
                             <img alt="image" 
-                                     src="/assets/img/user.png" 
+                                     src="https://static.vecteezy.com/system/resources/previews/016/079/150/non_2x/user-profile-account-or-contacts-silhouette-icon-isolated-on-white-background-free-vector.jpg" 
                                      class="user-img-radious-style">
                             @endif
                         <div class="dropdown-menu dropdown-menu-right pullDown">
                         <div class="dropdown-title">Hello, {{ Auth::user()->name }}!</div>
-                            <div class="dropdown-title">{{ Auth::user()->email }}!</div>
+                           
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
 

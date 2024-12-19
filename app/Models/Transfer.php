@@ -9,18 +9,26 @@ class Transfer extends Model
 {
     use HasFactory;
 
-    // Define the table associated with the model
+    // Table associated with the model
     protected $table = 'transfers';
 
-    // Define the fillable attributes for mass assignment
+    // Fillable attributes for mass assignment
     protected $fillable = [
+        'user_id',
         'cash_to_cash',
         'bank_to_bank',
     ];
 
-    // Optionally, you can define default values for cash_to_cash and bank_to_bank
+    // Default values for attributes
     protected $attributes = [
         'cash_to_cash' => 0.00,
         'bank_to_bank' => 0.00,
     ];
+
+    // Relationship: Each transfer belongs to a user
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
+

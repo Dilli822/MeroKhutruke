@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ecategory_id')->constrained()->cascadeOnDelete();
-            $table->string('amount');
-            $table->longText('description');
-            $table->string('date');
-            $table->timestamps();
+            $table->unsignedBigInteger('user_id'); // Foreign key to reference the users table
+            $table->string('details')->nullable(); // Optional details
+            $table->decimal('expenses_transportation', 8, 2)->default(0.00); // Default to 0.00
+            $table->decimal('expenses_fooding', 8, 2)->default(0.00); // Default to 0.00
+            $table->decimal('expenses_refreshment', 8, 2)->default(0.00); // Default to 0.00
+            $table->decimal('expenses_shopping', 8, 2)->default(0.00); // Default to 0.00
+            $table->timestamps(); // Default timestamps
+
+            // Adding the foreign key constraint
+            $table->foreign('user_id')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade'); // Cascade delete: removes expenses if the user is deleted
         });
     }
 
