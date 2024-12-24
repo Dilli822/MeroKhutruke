@@ -27,6 +27,7 @@ class CustomFinanceDetailsController extends Controller
             'is_expense' => 'nullable|boolean',
             'is_income' => 'nullable|boolean',
             'is_transaction' => 'nullable|boolean',
+            'entry_date' => 'required|date',
         ]);
 
         // Ensure only one of the flags is true
@@ -43,6 +44,7 @@ class CustomFinanceDetailsController extends Controller
             'is_expense' => $request->is_expense ?? 0,
             'is_income' => $request->is_income ?? 0,
             'is_transaction' => $request->is_transaction ?? 0,
+            'entry_date' =>  $request->entry_date,
         ]);
 
         return redirect()->route('custom_financial.create')->with('success', 'Financial entry added successfully!');

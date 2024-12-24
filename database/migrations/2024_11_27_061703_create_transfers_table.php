@@ -13,8 +13,9 @@ class CreateTransfersTable extends Migration
             $table->unsignedBigInteger('user_id'); // Foreign Key to reference users table
             $table->float('cash_to_cash', 15, 2)->default(0.00); // Float field with default 0.00
             $table->float('bank_to_bank', 15, 2)->default(0.00); // Float field with default 0.00
-            $table->timestamps(); // Timestamps for created_at and updated_at
-
+            $table->string('transfer_details')->nullable(); // Optional details
+            // $table->timestamps(); // Timestamps for created_at and updated_at
+            $table->date('transfer_date'); // Default to current date if not provided
             // Setting up the foreign key constraint
             $table->foreign('user_id')
                   ->references('id')

@@ -27,6 +27,7 @@ class FinancialController extends Controller
             'is_expense' => 'nullable|boolean',
             'is_income' => 'nullable|boolean',
             'is_transaction' => 'nullable|boolean',
+            'entry_date' => 'date|required',
         ]);
 
         // Ensure only one of the flags is true

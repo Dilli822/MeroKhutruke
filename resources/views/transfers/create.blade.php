@@ -100,6 +100,15 @@
                         class="form-control" min="0">
                 </div>
 
+                <div class="mb-3">
+                    <label for="details" class="form-label"> Details:</label>
+                    <textarea name="transfer_details" id="details" rows="4" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+        <label for="expense_date">Expense Date:</label>
+        <input type="date" class="form-control" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', now()->toDateString()) }}">
+    </div>
+
                 <!-- Submit Button -->
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary">Submit Transfer</button>

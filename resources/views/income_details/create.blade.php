@@ -1,11 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Income Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script>
+
+<x-app-layout>
+<div class="">
+
+    <div class="container">
+        <div class="card mx-auto shadow" style="max-width: 500px;">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create Income Details</h2>
+
+                <!-- Success Message -->
+                @if(session('success'))
+                    <div id="messageDiv" class="alert alert-success" role="alert">
+                        {{ session('success') }}
+                    </div>
+                    <script>
+                        showSuccessMessage();
+                    </script>
+                @endif
+
+                <!-- Error Messages -->
+                @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <!-- Form for Adding Income Details -->
+                <form action="{{ route('income_details.store') }}" method="POST">
+                    @csrf
+
+                    <!-- Select Field for Choosing Income Type -->
+                    <label for="income_type" class="block text-gray-700 font-semibold">Select Income Type:</label>
+                    <div class="mb-4">
+                      
+                            <select id="income_type" name="income_type" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" onchange="toggleFields()" required style="width: 100%;">
+        <option value="">-- Select --</option>
+        <option value="salary">Salary</option>
+        <option value="investment">Investment</option>
+    </select>
+                    
+                        </div>
+   
+
+
+
+
+                    <!-- Salary Field -->
+                    <div class="mb-3">
+                        <label for="income_salary" class="form-label">Salary:</label>
+                        <input type="number" name="income_salary" id="income_salary" step="0.01" value="{{ old('income_salary') }}" 
+                            class="form-control" min="0" disabled>
+                    </div>
+
+                    <!-- Investment Field -->
+                    <div class="mb-3">
+                        <label for="income_investment" class="form-label">Investment:</label>
+                        <input type="number" name="income_investment" id="income_investment" step="0.01" value="{{ old('income_investment') }}" 
+                            class="form-control" min="0" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                    <label for="details" class="form-label">Income Details:</label>
+                    <textarea name="income_details" id="income_details" rows="4" class="form-control"></textarea>
+                </div>
+
+                <div class="mb-4">
+    <label for="income_date" class="block text-gray-700 font-semibold">Date:</label>
+    <input type="date" name="income_date" id="income_date" required value="{{ old('income_date', now()->toDateString()) }}" 
+        class="form-input mt-1 block w-full p-2 border border-gray-300 rounded-md" style="width: 100%;">
+</div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
         // Function to toggle the input fields based on the selected option
         function toggleFields() {
             var selectedValue = document.getElementById('income_type').value;
@@ -60,76 +139,5 @@
             investmentField.disabled = true;
         }
     </script>
-</head>
-
-<body class="bg-light py-5">
-<x-app-layout>
-    <div class="container">
-        <div class="card mx-auto shadow" style="max-width: 500px;">
-            <div class="card-body">
-                <h2 class="card-title text-center mb-4">Create Income Details</h2>
-
-                <!-- Success Message -->
-                @if(session('success'))
-                    <div id="messageDiv" class="alert alert-success" role="alert">
-                        {{ session('success') }}
-                    </div>
-                    <script>
-                        showSuccessMessage();
-                    </script>
-                @endif
-
-                <!-- Error Messages -->
-                @if($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <!-- Form for Adding Income Details -->
-                <form action="{{ route('income_details.store') }}" method="POST">
-                    @csrf
-
-                    <!-- Select Field for Choosing Income Type -->
-                    <div class="mb-3">
-                        <label for="income_type" class="form-label">Select Income Type:</label>
-                        <select id="income_type" name="income_type" class="form-select" onchange="toggleFields()" required>
-                            <option value="">-- Select --</option>
-                            <option value="salary">Salary</option>
-                            <option value="investment">Investment</option>
-                        </select>
-                    </div>
-
-                    <!-- Salary Field -->
-                    <div class="mb-3">
-                        <label for="income_salary" class="form-label">Salary:</label>
-                        <input type="number" name="income_salary" id="income_salary" step="0.01" value="{{ old('income_salary') }}" 
-                            class="form-control" min="0" disabled>
-                    </div>
-
-                    <!-- Investment Field -->
-                    <div class="mb-3">
-                        <label for="income_investment" class="form-label">Investment:</label>
-                        <input type="number" name="income_investment" id="income_investment" step="0.01" value="{{ old('income_investment') }}" 
-                            class="form-control" min="0" disabled>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
 
 </x-app-layout>

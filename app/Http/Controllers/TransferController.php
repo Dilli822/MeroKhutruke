@@ -24,6 +24,8 @@ class TransferController extends Controller
         $validated = $request->validate([
             'cash_to_cash' => 'nullable|numeric|min:0', // Optional, must be numeric and non-negative
             'bank_to_bank' => 'nullable|numeric|min:0', // Optional, must be numeric and non-negative
+            'transfer_details' => 'string|max:255',
+            'transfer_date' => 'required|date', // Ensure expense_date is provided and is a valid date
         ]);
 
         // Create a transfer for the authenticated user

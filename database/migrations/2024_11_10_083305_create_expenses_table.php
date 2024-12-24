@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +18,8 @@ return new class extends Migration
             $table->decimal('expenses_fooding', 8, 2)->default(0.00); // Default to 0.00
             $table->decimal('expenses_refreshment', 8, 2)->default(0.00); // Default to 0.00
             $table->decimal('expenses_shopping', 8, 2)->default(0.00); // Default to 0.00
-            $table->timestamps(); // Default timestamps
+            // $table->timestamps(); // Default timestamps
+            $table->date('expense_date'); // Default to current date if not provided
 
             // Adding the foreign key constraint
             $table->foreign('user_id')

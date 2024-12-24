@@ -67,25 +67,38 @@
             <th>ID</th>
             <th>Cash to Cash</th>
             <th>Bank to Bank</th>
+            <th>Transfer Details</th>
             <th>Created Date</th>
-            <th>Updated Date</th>
             <th>Action</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($transfers as $transfer)
-            <tr data-created="{{ $transfer->created_at->toIso8601String() }}" data-updated="{{ $transfer->updated_at->toIso8601String() }}">
-                <td>{{ $transfer->id }}</td>
-                <td>Rs.{{ number_format($transfer->cash_to_cash, 2) }}</td>
-                <td>Rs.{{ number_format($transfer->bank_to_bank, 2) }}</td>
-                <td>{{ $transfer->created_at->format('d M Y') }}</td>
-                <td>{{ $transfer->updated_at->format('d M Y') }}</td>
-                <td>
-                    <button class="btn btn-download" onclick="downloadPDF('transfersTable', {{ $transfer->id }})">Download PDF</button>
-                </td>                 
-            </tr>
-        @endforeach
-    </tbody>
+
+    @foreach($transfers->sortByDesc('transfer_date') as $transfer)
+        <tr data-created="{{ $transfer->transfer_date }}">
+            <td>{{ $transfer->id }}</td>
+            <td>{{ $transfer->cash_to_cash == 0 ? '-' : 'Rs.' . number_format($transfer->cash_to_cash, 2) }}</td>
+            <td>{{ $transfer->bank_to_bank == 0 ? '-' : 'Rs.' . number_format($transfer->bank_to_bank, 2) }}</td>
+            <td>{{ $transfer->transfer_details }}</td>
+            <td>{{ $transfer->transfer_date }}</td>
+            <td>
+                <button class="btn btn-success btn-download" onclick="downloadPDF('transfersTable', {{ $transfer->id }})">Download PDF</button>
+                </td>
+                <td>   
+                <!-- Add the Delete button with form submission -->
+                <form action="{{ route('financial.deleteTransfer', $transfer->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this transfer?')">Delete</button>
+                </form>
+            </td>                 
+        </tr>
+    @endforeach
+
+
+</tbody>
+
 </table>
 
     </div>
@@ -102,34 +115,52 @@
                 <thead>
                     <tr>
                         <th>Entry ID</th>
+                        <th>Details</th>
                         <th>Amount</th>
                         <th>Income</th>
                         <th>Expense</th>
-                        <th>Details</th>
-                        <th>Transaction</th>
+
+                        <th class="d-none">Transaction</th>
                         <th>Created Date</th>
-                        <th>Updated Date</th>
                         <th>Action</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Loop to display custom financial entries dynamically -->
-                    @foreach ($customFinancialEntries as $entry)
-                        <tr data-created="{{ $entry->created_at->format('Y-m-d') }}" data-updated="{{ $entry->updated_at->format('Y-m-d') }}">
-                            <td>{{ $entry->id }}</td>
-                            <td>Rs.{{ $entry->amount }}</td>
-                            <td>{{ $entry->is_income }}</td>
-                            <td>{{ $entry->is_expense }}</td>
-                            <td>{{ $entry->details }}</td>
-                            <td>{{ $entry->is_transaction }}</td>
-                            <td>{{ $entry->created_at->format('d M Y') }}</td>
-                            <td>{{ $entry->updated_at->format('d M Y') }}</td>
-                            <td>
-                                <button class="btn btn-download" onclick="downloadPDF('customFinancialEntry', {{ $entry->id }})">Download PDF</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+    <!-- Loop to display custom financial entries dynamically -->
+    @foreach ($customFinancialEntries->sortByDesc('entry_date') as $entry)
+    <tr data-created="{{ $entry->entry_date }}" >
+        <td>{{ $entry->id }}</td>
+        <td>{{ $entry->details }}</td>
+        <td>Rs.{{ $entry->amount }}</td>
+        <td>{{ $entry->is_income ? 'Yes' : 'No' }}</td>
+        <td>{{ $entry->is_expense ? 'Yes' : 'No' }}</td>
+        <td class="d-none">{{ $entry->is_transaction ? 'Yes' : 'No' }}</td>
+        <td>{{ $entry->entry_date }}</td>
+        <td>
+
+            <button class="btn btn-success btn-download" onclick="downloadPDF('customFinancialEntry', {{ $entry->id }})">Download PDF</button>
+            <a href="{{ route('financial.editCustomFinancialEntry', $entry->id) }}" class="btn btn-warning">Edit</a>
+
+        </td>
+        
+
+        
+
+        <td>
+                <!-- Delete Custom Financial Entry -->
+                <form action="{{ route('financial.deleteCustomFinancialEntry', $entry->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this entry?')">Delete</button>
+                </form>
+            </td>
+
+    </tr>
+@endforeach
+
+</tbody>
+
             </table>
         </div>
     </div>
@@ -146,26 +177,41 @@
                         <th>Income ID</th>
                         <th>Income Salary</th>
                         <th>Income Investment</th>
+                        <th>Income Details</th>
                         <th>Created Date</th>
-                        <th>Updated Date</th>
                         <th>Action</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Loop to display income data dynamically -->
-                    @foreach ($incomeDetails as $income)
-                        <tr data-created="{{ $income->created_at->format('Y-m-d') }}" data-updated="{{ $income->updated_at->format('Y-m-d') }}">
-                            <td>{{ $income->id }}</td>
-                            <td>Rs.{{ $income->income_salary }}</td>
-                            <td>Rs.{{ $income->income_investment }}</td>
-                            <td>{{ $income->created_at->format('d M Y') }}</td>
-                            <td>{{ $income->updated_at->format('d M Y') }}</td>
-                            <td>
-                                <button class="btn btn-download" onclick="downloadPDF('incomeDetail', {{ $income->id }})">Download PDF</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+    <!-- Loop to display income data dynamically -->
+    <tbody>
+    <!-- Loop to display income data dynamically -->
+    @foreach ($incomeDetails->sortByDesc('income_date') as $income)
+        <tr data-created="{{ $income->income_date }}">
+            <td>{{ $income->id }}</td>
+            <td>{{ $income->income_salary == 0 ? '-' : 'Rs.' . $income->income_salary }}</td>
+            <td>{{ $income->income_investment == 0 ? '-' : 'Rs.' . $income->income_investment }}</td>
+            <td>{{ $income->income_details }}</td>
+            <td>{{ $income->income_date }}</td>
+            <td>
+                
+                <button class="btn btn-success btn-download" onclick="downloadPDF('incomeDetail', {{ $income->id }})">Download PDF</button>
+                <a href="{{ route('financial.editIncomeDetail', $income->id) }}" class="btn btn-warning">Edit</a>
+            </td>
+            <td>
+            <form action="{{ route('financial.deleteIncomeDetail', $income->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this income detail?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
+</tbody>
+
             </table>
         </div>
     </div>
@@ -176,39 +222,49 @@
             <h3>Expenses Details</h3>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="expensesDetailsTable">
-                <thead>
-                    <tr>
-                        <th>Expense ID</th>
-                        <th>Details</th>
-                        <th>Transportation</th>
-                        <th>Fooding</th>
-                        <th>Refreshment</th>
-                        <th>Shopping</th>
-                        <th>Created Date</th>
-                        <th>Updated Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Loop to display expense data dynamically -->
-                    @foreach ($expenses as $expense)
-                        <tr data-created="{{ $expense->created_at->format('Y-m-d') }}" data-updated="{{ $expense->updated_at->format('Y-m-d') }}">
-                            <td>{{ $expense->id }}</td>
-                            <td>{{ $expense->details }}</td>
-                            <td>Rs.{{ $expense->expenses_transportation }}</td>
-                            <td>Rs.{{ $expense->expenses_fooding }}</td>
-                            <td>Rs.{{ $expense->expenses_refreshment }}</td>
-                            <td>Rs.{{ $expense->expenses_shopping }}</td>
-                            <td>{{ $expense->created_at->format('d M Y') }}</td>
-                            <td>{{ $expense->updated_at->format('d M Y') }}</td>
-                            <td>
-                                <button class="btn btn-download" onclick="downloadPDF('expense', {{ $expense->id }})">Download PDF</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <table class="table table-striped" id="expensesDetailsTable">
+    <thead>
+        <tr>
+            <th>Expense ID</th>
+            <th>Details</th>
+            <th>Transportation</th>
+            <th>Fooding</th>
+            <th>Refreshment</th>
+            <th>Shopping</th>
+            <th>Created Date</th>
+            <th>Action</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop to display expense data dynamically -->
+        @foreach ($expenses->sortByDesc('expense_date') as $expense)
+            <tr data-created="{{ $expense->expense_date }}">
+                <td>{{ $expense->id }}</td>
+                <td>{{ $expense->details }}</td>
+                <td>{{ $expense->expenses_transportation == 0 ? '-' : 'Rs.' . $expense->expenses_transportation }}</td>
+                <td>{{ $expense->expenses_fooding == 0 ? '-' : 'Rs.' . $expense->expenses_fooding }}</td>
+                <td>{{ $expense->expenses_refreshment == 0 ? '-' : 'Rs.' . $expense->expenses_refreshment }}</td>
+                <td>{{ $expense->expenses_shopping == 0 ? '-' : 'Rs.' . $expense->expenses_shopping }}</td>
+                <td>{{ $expense->expense_date }}</td>
+                <td>
+                    <button class="btn btn-success btn-download" onclick="downloadPDF('expense', {{ $expense->id }})">Download PDF</button>
+                    <a href="{{ route('financial.editExpense', $expense->id) }}" class="btn btn-warning">Edit</a>
+                </td>
+                <td>
+                    <!-- Delete Expense -->
+                    <form action="{{ route('financial.deleteExpense', $expense->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
+    
         </div>
     </div>
 
@@ -234,10 +290,9 @@ function filterData() {
         const rows = document.querySelectorAll(`${tableId} tbody tr`);
         rows.forEach(row => {
             const createdDate = new Date(row.getAttribute('data-created'));
-            const updatedDate = new Date(row.getAttribute('data-updated'));
 
             // Show row if it matches the filter condition
-            if (createdDate >= filterDate || updatedDate >= filterDate) {
+            if (createdDate >= filterDate ) {
                 row.style.display = ''; // Display row
             } else {
                 row.style.display = 'none'; // Hide row
@@ -256,17 +311,26 @@ window.onload = function() {
     window.userId = "{{ auth()->user()->id }}";  // Laravel user ID to JavaScript
     window.userEmail = "{{ auth()->user()->email }}";  // Laravel user email to JavaScript
     window.userName = "{{ auth()->user()->name }}";  // Laravel user email to JavaScript
+   
+
 
 function downloadPDF(type, id) {
     // Get the row containing the clicked button
     const row = event.target.closest('tr');
     const table = row.closest('table');
     
-    // Extract the table headers dynamically
-    const headers = Array.from(table.querySelectorAll('thead th')).map(header => header.innerText);
+    // Extract the table headers dynamically, skipping the last header
+    const headers = Array.from(table.querySelectorAll('thead th')).map((header, index) => {
+        // Skip the last header column
+        if (index !== table.querySelectorAll('thead th').length - 1) {
+            return header.innerText;
+        }
+    }).filter(Boolean);  // Remove undefined values (for the skipped header)
 
-    // Extract the row data for the clicked row
-    const data = Array.from(row.cells).map(cell => cell.innerText);
+    // Extract the row data for the clicked row, excluding the last cell (delete button)
+    const data = Array.from(row.cells)
+        .filter((cell, index) => index !== row.cells.length - 1)  // Skip the last cell (delete button)
+        .map(cell => cell.innerText);
 
     // Get the current timestamp
     const currentTimestamp = new Date().toLocaleString();
@@ -279,11 +343,16 @@ function downloadPDF(type, id) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Add a title for the PDF
-    doc.text(`${type} PDF`, 10, 10);
+    // Add "Mero Khutruke" at the top
+    doc.setFontSize(16); // Set a larger font size for the title
+    doc.text('Mero Khutruke', 10, 10);
 
-    // Starting Y position for text
-    let yPosition = 20;
+    // Add a title for the PDF (below "Mero Khutruke")
+    doc.setFontSize(12);  // Reset font size for the type title
+    doc.text(`${type} PDF`, 10, 20);
+
+    // Starting Y position for text (after the title)
+    let yPosition = 30;
 
     // Loop through headers and corresponding row data to display in the PDF
     headers.forEach((header, index) => {
@@ -295,20 +364,22 @@ function downloadPDF(type, id) {
     yPosition += 10; // Add some space before the user info section
     doc.text(`Generated By UserId: ${userId}`, 10, yPosition);
     yPosition += 10;
-    doc.text(`Generated By Username: ${  userName}`, 10, yPosition);
+    doc.text(`Generated By Username: ${userName}`, 10, yPosition);
     yPosition += 10;
     doc.text(`User Email: ${userEmail}`, 10, yPosition);
     yPosition += 10;
     doc.text(`Timestamp: ${currentTimestamp}`, 10, yPosition);
     yPosition += 10;
 
-// Decrease the font size to 8 (or any other size you prefer)
-doc.setFontSize(8);
-doc.text('Please Keep Your PDF Save and Secure. It may contain sensitive information. Mero Khutruke: Takes no responsibility further. Thanks!', 5, yPosition);
+    // Decrease the font size to 8 (or any other size you prefer)
+    doc.setFontSize(8);
+    doc.text('Please Keep Your PDF Save and Secure. It may contain sensitive information. Mero Khutruke: Takes no responsibility further. Thanks!', 5, yPosition);
 
     // Save the PDF with the file name as type + id
     doc.save(`${type}_${id}.pdf`);
 }
+
+
 </script>
 
 

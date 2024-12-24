@@ -13,7 +13,8 @@ class CreateIncomeDetailsTable extends Migration
             $table->unsignedBigInteger('user_id'); // Foreign Key to reference users table
             $table->decimal('income_salary', 10, 2)->default(0.00);
             $table->decimal('income_investment', 10, 2)->default(0.00);
-            $table->timestamps();
+            $table->date('income_date'); // Default to current date if not provided
+            $table->string('income_details')->nullable(); // Optional details
 
             // Setting up the foreign key constraint
             $table->foreign('user_id')

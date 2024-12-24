@@ -55,7 +55,7 @@
     </div>
 
     <!-- Transfers Table -->
-    <div class="card mb-4">
+    <div class="card mb-4 ">
         <div class="card-header">
             <h3>Transfers</h3>
         </div>
@@ -67,24 +67,35 @@
             <th>Cash to Cash</th>
             <th>Bank to Bank</th>
             <th>Created Date</th>
-            <th>Updated Date</th>
             <th>Action</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($transfers as $transfer)
-            <tr data-created="{{ $transfer->created_at->toIso8601String() }}" data-updated="{{ $transfer->updated_at->toIso8601String() }}">
-                <td>{{ $transfer->id }}</td>
-                <td>Rs.{{ number_format($transfer->cash_to_cash, 2) }}</td>
-                <td>Rs.{{ number_format($transfer->bank_to_bank, 2) }}</td>
-                <td>{{ $transfer->created_at->format('d M Y') }}</td>
-                <td>{{ $transfer->updated_at->format('d M Y') }}</td>
-                <td>
-                    <button class="btn btn-download" onclick="downloadPDF('transfersTable', {{ $transfer->id }})">Download PDF</button>
-                </td>                 
-            </tr>
-        @endforeach
-    </tbody>
+
+    @foreach($transfers->sortByDesc('transfer_date') as $transfer)
+        <tr data-created="{{ $transfer->transfer_date }}">
+            <td>{{ $transfer->id }}</td>
+            <td>{{ $transfer->cash_to_cash == 0 ? '-' : 'Rs.' . number_format($transfer->cash_to_cash, 2) }}</td>
+            <td>{{ $transfer->bank_to_bank == 0 ? '-' : 'Rs.' . number_format($transfer->bank_to_bank, 2) }}</td>
+            <td>{{ $transfer->transfer_date }}</td>
+            <td>
+                <button class="btn btn-success btn-download" onclick="downloadPDF('transfersTable', {{ $transfer->id }})">Download PDF</button>
+                </td>
+                <td>   
+                <!-- Add the Delete button with form submission -->
+                <form action="{{ route('financial.deleteTransfer', $transfer->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this transfer?')">Delete</button>
+                </form>
+            </td>                 
+        </tr>
+    @endforeach
+
+
+</tbody>
+
 </table>
 
     </div>
@@ -101,34 +112,46 @@
                 <thead>
                     <tr>
                         <th>Entry ID</th>
+                        <th>Details</th>
                         <th>Amount</th>
                         <th>Income</th>
                         <th>Expense</th>
-                        <th>Details</th>
-                        <th>Transaction</th>
+
+                        <th class="d-none">Transaction</th>
                         <th>Created Date</th>
-                        <th>Updated Date</th>
                         <th>Action</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Loop to display custom financial entries dynamically -->
-                    @foreach ($customFinancialEntries as $entry)
-                        <tr data-created="{{ $entry->created_at->format('Y-m-d') }}" data-updated="{{ $entry->updated_at->format('Y-m-d') }}">
-                            <td>{{ $entry->id }}</td>
-                            <td>Rs.{{ $entry->amount }}</td>
-                            <td>{{ $entry->is_income }}</td>
-                            <td>{{ $entry->is_expense }}</td>
-                            <td>{{ $entry->details }}</td>
-                            <td>{{ $entry->is_transaction }}</td>
-                            <td>{{ $entry->created_at->format('d M Y') }}</td>
-                            <td>{{ $entry->updated_at->format('d M Y') }}</td>
-                            <td>
-                                <button class="btn btn-download" onclick="downloadPDF('customFinancialEntry', {{ $entry->id }})">Download PDF</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+    <!-- Loop to display custom financial entries dynamically -->
+    @foreach ($customFinancialEntries->sortByDesc('entry_date') as $entry)
+    <tr data-created="{{ $entry->entry_date }}" >
+        <td>{{ $entry->id }}</td>
+        <td>{{ $entry->details }}</td>
+        <td>Rs.{{ $entry->amount }}</td>
+        <td>{{ $entry->is_income ? 'Yes' : 'No' }}</td>
+        <td>{{ $entry->is_expense ? 'Yes' : 'No' }}</td>
+        <td class="d-none">{{ $entry->is_transaction ? 'Yes' : 'No' }}</td>
+        <td>{{ $entry->entry_date }}</td>
+        <td>
+            <button class="btn btn-success btn-download" onclick="downloadPDF('customFinancialEntry', {{ $entry->id }})">Download PDF</button>
+        </td>
+
+        <td>
+                <!-- Delete Custom Financial Entry -->
+                <form action="{{ route('financial.deleteCustomFinancialEntry', $entry->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this entry?')">Delete</button>
+                </form>
+            </td>
+
+    </tr>
+@endforeach
+
+</tbody>
+
             </table>
         </div>
     </div>
@@ -145,26 +168,39 @@
                         <th>Income ID</th>
                         <th>Income Salary</th>
                         <th>Income Investment</th>
+                        <th>Income Details</th>
                         <th>Created Date</th>
-                        <th>Updated Date</th>
                         <th>Action</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Loop to display income data dynamically -->
-                    @foreach ($incomeDetails as $income)
-                        <tr data-created="{{ $income->created_at->format('Y-m-d') }}" data-updated="{{ $income->updated_at->format('Y-m-d') }}">
-                            <td>{{ $income->id }}</td>
-                            <td>Rs.{{ $income->income_salary }}</td>
-                            <td>Rs.{{ $income->income_investment }}</td>
-                            <td>{{ $income->created_at->format('d M Y') }}</td>
-                            <td>{{ $income->updated_at->format('d M Y') }}</td>
-                            <td>
-                                <button class="btn btn-download" onclick="downloadPDF('incomeDetail', {{ $income->id }})">Download PDF</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+    <!-- Loop to display income data dynamically -->
+    <tbody>
+    <!-- Loop to display income data dynamically -->
+    @foreach ($incomeDetails->sortByDesc('income_date') as $income)
+        <tr data-created="{{ $income->income_date }}">
+            <td>{{ $income->id }}</td>
+            <td>{{ $income->income_salary == 0 ? '-' : 'Rs.' . $income->income_salary }}</td>
+            <td>{{ $income->income_investment == 0 ? '-' : 'Rs.' . $income->income_investment }}</td>
+            <td>{{ $income->income_details }}</td>
+            <td>{{ $income->income_date }}</td>
+            <td>
+                <button class="btn btn-success btn-download" onclick="downloadPDF('incomeDetail', {{ $income->id }})">Download PDF</button>
+            </td>
+            <td>
+            <form action="{{ route('financial.deleteIncomeDetail', $income->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this income detail?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
+</tbody>
+
             </table>
         </div>
     </div>
@@ -185,34 +221,46 @@
                         <th>Refreshment</th>
                         <th>Shopping</th>
                         <th>Created Date</th>
-                        <th>Updated Date</th>
                         <th>Action</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Loop to display expense data dynamically -->
-                    @foreach ($expenses as $expense)
-                        <tr data-created="{{ $expense->created_at->format('Y-m-d') }}" data-updated="{{ $expense->updated_at->format('Y-m-d') }}">
-                            <td>{{ $expense->id }}</td>
-                            <td>{{ $expense->details }}</td>
-                            <td>Rs.{{ $expense->expenses_transportation }}</td>
-                            <td>Rs.{{ $expense->expenses_fooding }}</td>
-                            <td>Rs.{{ $expense->expenses_refreshment }}</td>
-                            <td>Rs.{{ $expense->expenses_shopping }}</td>
-                            <td>{{ $expense->created_at->format('d M Y') }}</td>
-                            <td>{{ $expense->updated_at->format('d M Y') }}</td>
-                            <td>
-                                <button class="btn btn-download" onclick="downloadPDF('expense', {{ $expense->id }})">Download PDF</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+    <!-- Loop to display expense data dynamically -->
+    @foreach ($expenses->sortByDesc('expense_date') as $expense)
+        <tr data-created="{{ $expense->expense_date }}">
+            <td>{{ $expense->id }}</td>
+            <td>{{ $expense->details }}</td>
+            <td>{{ $expense->expenses_transportation == 0 ? '-' : 'Rs.' . $expense->expenses_transportation }}</td>
+            <td>{{ $expense->expenses_fooding == 0 ? '-' : 'Rs.' . $expense->expenses_fooding }}</td>
+            <td>{{ $expense->expenses_refreshment == 0 ? '-' : 'Rs.' . $expense->expenses_refreshment }}</td>
+            <td>{{ $expense->expenses_shopping == 0 ? '-' : 'Rs.' . $expense->expenses_shopping }}</td>
+            <td>{{ $expense->expense_date }}</td>
+            <td>
+                <button class="btn btn-success btn-download" onclick="downloadPDF('expense', {{ $expense->id }})">Download PDF</button>
+            </td>
+            <td>
+                <!-- Delete Expense -->
+                <form action="{{ route('financial.deleteExpense', $expense->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
             </table>
         </div>
     </div>
 
     </section>
-    <h2>Finance Visualizations | [Last One Month] </h2>      
+
+
+
+
+    <h2 class="mb-3">Finance Visualizations | [Last One Month] </h2>      
 
 
 
@@ -283,10 +331,9 @@ function filterData() {
         const rows = document.querySelectorAll(`${tableId} tbody tr`);
         rows.forEach(row => {
             const createdDate = new Date(row.getAttribute('data-created'));
-            const updatedDate = new Date(row.getAttribute('data-updated'));
 
             // Show row if it matches the filter condition
-            if (createdDate >= filterDate || updatedDate >= filterDate) {
+            if (createdDate >= filterDate) {
                 row.style.display = ''; // Display row
             } else {
                 row.style.display = 'none'; // Hide row
@@ -328,14 +375,19 @@ function getCustomFinancialData() {
 
     rows.forEach(row => {
         if (row.style.display !== 'none') { // Only include visible rows
-            const amount = parseFloat(row.cells[1].innerText.replace('Rs.', '').trim()) || 0;
-            const isIncome = row.cells[2].innerText.trim() === '1'; // Check if the income column is 1
-            const isExpense = row.cells[3].innerText.trim() === '1'; // Check if the expense column is 1
-            const isTransaction = row.cells[5].innerText.trim() === '1'; // Check if it's a transaction
+            const amount = parseFloat(row.cells[2].innerText.replace('Rs.', '').replace(',', '').trim()) || 0;
 
+            const isIncome = row.cells[3].innerText.trim() === 'Yes'; // Check if the income column is 1
+            const isExpense = row.cells[4].innerText.trim() === 'Yes'; // Check if the expense column is 1
+            const isTransaction = row.cells[5].innerText.trim() === 'Yes'; // Check if it's a transaction
+
+           
             if (isIncome) customIncome += amount; // Add to custom income if it's marked as income
             if (isExpense) customExpense += amount; // Add to custom expense if it's marked as expense
             if (isTransaction) customTransaction += amount; // Add to custom transaction if it's marked as transaction
+
+
+            console.log("checking", amount)
         }
     });
 
@@ -381,8 +433,8 @@ function createGraphs() {
         data: {
             labels: ['Income Salary', 'Income Investment', 'Expenses', 'Custom Income', 'Custom Expense', 'Custom Transactions'],
             datasets: [{
-                data: [incomeSalary, incomeInvestment, expensesTotal, customIncome, customExpense, customTransaction],
-                backgroundColor: ['#4caf50', '#2196f3', '#f44336', '#ff9800', '#9c27b0', '#00bcd4']
+                data: [incomeSalary, incomeInvestment, expensesTotal, customIncome, customExpense],  //, customTransaction],
+                backgroundColor: ['#4caf50', '#2196f3', '#f44336', '#ff9800', '#9c27b0'],     // '#00bcd4']
             }]
         },
         options: {
@@ -403,24 +455,32 @@ function createGraphs() {
     document.getElementById('totalIncomeAmount').innerText = totalIncome.toFixed(2);
     document.getElementById('totalExpenseAmount').innerText = totalExpense.toFixed(2);
     document.getElementById('totalAvailableBalanceAmount').innerText = totalRemaining.toFixed(2);
+
+    
 // Prepare data for the Bar Chart
 const transferRows = document.querySelectorAll('#transfersTable tr'); // Select all rows in the table
 let cashToCash = 0;
 let bankToBank = 0;
 
-    
 
 transferRows.forEach(row => {
     if (row.style.display !== 'none') {
-        const cashToCashValue = parseFloat(row.cells[1]?.innerText.replace('Rs.', '').trim()) || 0;
-        const bankToBankValue = parseFloat(row.cells[2]?.innerText.replace('Rs.', '').trim()) || 0;
+        // Extract and parse values, removing 'Rs.', commas, and trimming spaces
+        const cashToCashValue = parseFloat(row.cells[1]?.innerText.replace('Rs.', '').replace(/,/g, '').trim()) || 0;
+        const bankToBankValue = parseFloat(row.cells[2]?.innerText.replace('Rs.', '').replace(/,/g, '').trim()) || 0;
+
+
+        console.log("cash to cash", cashToCashValue)
 
         cashToCash += cashToCashValue;
         bankToBank += bankToBankValue;
     }
 });
-document.getElementById('cash_to_cash').innerText = cashToCash.toFixed(2);
-document.getElementById('bank_to_bank').innerText = bankToBank.toFixed(2);
+const cashtocashvar = document.getElementById('cash_to_cash').innerText = cashToCash.toFixed(2);
+const banktobankvar =  document.getElementById('bank_to_bank').innerText = bankToBank.toFixed(2);
+
+console.log(banktobankvar)
+console.log(cashtocashvar)
 // Create the bar chart
 const barCtx = document.getElementById('barChart').getContext('2d');
 new Chart(barCtx, {

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transfer;
-use App\Models\CustomFinancialEntry;
+use App\Models\CustomFinanceDetails;
 use App\Models\IncomeDetail;
 use App\Models\Expense;
 
@@ -21,7 +21,7 @@ class MasterFinancialController extends Controller
         $userId = auth()->id(); // Get the authenticated user's ID
 
         $transfers = Transfer::where('user_id', $userId)->get();
-        $customFinancialEntries = CustomFinancialEntry::where('user_id', $userId)->get();
+        $customFinancialEntries = CustomFinanceDetails::where('user_id', $userId)->get();
         $incomeDetails = IncomeDetail::where('user_id', $userId)->get();
         $expenses = Expense::where('user_id', $userId)->get();
 

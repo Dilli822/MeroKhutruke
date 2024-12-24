@@ -21,14 +21,19 @@ class IncomeDetailsController extends Controller
             'income_type' => 'required|string',
             'income_salary' => 'nullable|numeric|min:0',
             'income_investment' => 'nullable|numeric|min:0',
+            'income_details' => 'nullable|string',
+            'income_date'  => 'required|date',
         ]);
     
         // Create a new IncomeDetail instance and store the data
         $incomeDetail = new IncomeDetail();
-        $incomeDetail->user_id = auth()->id(); // Assign the logged-in user's ID
+        $incomeDetail->user_id = auth()->id();
         $incomeDetail->income_salary = $request->income_type === 'salary' ? $request->income_salary : 0.00;
         $incomeDetail->income_investment = $request->income_type === 'investment' ? $request->income_investment : 0.00;
-    
+        $incomeDetail->income_details = $request->income_details; // Fix: Ensure this value is provided
+        $incomeDetail->income_date = $request->income_date; // Fix: Ensure this value is provided
+        $incomeDetail->save();
+        
         // Save to the database
         $incomeDetail->save();
     

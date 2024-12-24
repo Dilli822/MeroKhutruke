@@ -10,8 +10,8 @@ class Expense extends Model
     use HasFactory;
 
     // Define the table associated with the model
-    protected $table = 'expenses';
-
+    // protected $table = 'expenses';
+    public $timestamps = false; 
     // Define the fillable fields
     protected $fillable = [
         'user_id',
@@ -20,6 +20,7 @@ class Expense extends Model
         'expenses_fooding',
         'expenses_refreshment',
         'expenses_shopping',
+        'expense_date'
     ];
 
     // Cast attributes to appropriate data types

@@ -146,7 +146,7 @@ window.onload = function() {
                     </div>
 
                     <!-- Transaction Checkbox -->
-                    <div class="form-check mb-3">
+                    <div class="form-check mb-3 d-none">
                         <input class="form-check-input" type="checkbox" name="is_transaction" id="is_transaction" value="1" 
                             {{ old('is_transaction') ? 'checked' : '' }} onclick="handleCheckboxChange(this)">
                         <label class="form-check-label" for="is_transaction">Transaction</label>
@@ -168,7 +168,16 @@ window.onload = function() {
                             <label for="transaction" class="form-label">Transaction Amount:</label>
                             <input type="number" name="transaction" id="transaction" step="0.01" value="{{ old('transaction') }}" class="form-control">
                         </div>
+
+
+   
                     </div>
+
+                <div class="form-group">
+        <label for="entry_date"> Date:</label>
+        <input type="date" class="form-control" id="entry_date" name="entry_date" value="{{ old('entry_date', now()->toDateString()) }}" required >
+    </div>
+
 
                     <!-- Submit Button -->
                     <div class="d-grid">

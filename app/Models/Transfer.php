@@ -10,13 +10,15 @@ class Transfer extends Model
     use HasFactory;
 
     // Table associated with the model
-    protected $table = 'transfers';
+    public $timestamps = false; 
 
     // Fillable attributes for mass assignment
     protected $fillable = [
         'user_id',
         'cash_to_cash',
         'bank_to_bank',
+        'transfer_details',
+        'transfer_date',
     ];
 
     // Default values for attributes

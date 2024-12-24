@@ -17,28 +17,31 @@ class ExpensesFullController extends Controller
     /**
      * Store a new expense.
      */
-    public function store(Request $request)
-    {
-        // Validate the incoming request data (no nullable fields)
-        $validated = $request->validate([
-            'details' => 'string|max:255', // Details are required, but no nullable
-            'expenses_transportation' => 'numeric|min:0', // Transportation is required
-            'expenses_fooding' => 'numeric|min:0', // Fooding is required
-            'expenses_refreshment' => 'numeric|min:0', // Refreshment is required
-            'expenses_shopping' => 'numeric|min:0', // Shopping is required
-        ]);
-
-        // Set each field to 0.00 if not provided (handle missing fields manually)
-        $validated['expenses_transportation'] = $request->has('expenses_transportation') ? $validated['expenses_transportation'] : 0.00;
-        $validated['expenses_fooding'] = $request->has('expenses_fooding') ? $validated['expenses_fooding'] : 0.00;
-        $validated['expenses_refreshment'] = $request->has('expenses_refreshment') ? $validated['expenses_refreshment'] : 0.00;
-        $validated['expenses_shopping'] = $request->has('expenses_shopping') ? $validated['expenses_shopping'] : 0.00;
-
-        // Create a new expense for the authenticated user
-        Expense::create(array_merge($validated, ['user_id' => auth()->id()]));
-
-        return redirect()->route('expenses.create')->with('success', 'Expense created successfully!');
-    }
+  
+     public function store(Request $request)
+     {
+         // Validate the incoming request data
+         $validated = $request->validate([
+             'details' => 'string|max:255',
+             'expenses_transportation' => 'numeric|min:0',
+             'expenses_fooding' => 'numeric|min:0',
+             'expenses_refreshment' => 'numeric|min:0',
+             'expenses_shopping' => 'numeric|min:0',
+             'expense_date' => 'required|date', // Ensure expense_date is provided and is a valid date
+         ]);
+     
+         // Handle missing fields (set to 0.00 if not provided)
+         $validated['expenses_transportation'] = $request->has('expenses_transportation') ? $validated['expenses_transportation'] : 0.00;
+         $validated['expenses_fooding'] = $request->has('expenses_fooding') ? $validated['expenses_fooding'] : 0.00;
+         $validated['expenses_refreshment'] = $request->has('expenses_refreshment') ? $validated['expenses_refreshment'] : 0.00;
+         $validated['expenses_shopping'] = $request->has('expenses_shopping') ? $validated['expenses_shopping'] : 0.00;
+     
+         // Create a new expense entry
+         Expense::create(array_merge($validated, ['user_id' => auth()->id()]));
+     
+         return redirect()->route('expenses.create')->with('success', 'Expense created successfully!');
+     }
+     
 
     /**
      * Display a list of all expenses.
