@@ -32,7 +32,7 @@
                 <x-nav-link url="#features">Features</x-nav-link>
                 <x-nav-link url="#blogs">Blogs</x-nav-link>
                 <x-nav-link url="#contact">Contact Us</x-nav-link>
-                <x-button-link url="/users/login" bgClass="bg-gray-200" textClass="text-gray-700"
+                <x-button-link url="/dashboard" bgClass="bg-gray-200" textClass="text-gray-700"
                     hoverClass="hover:bg-gray-300" icon="arrow-right">
                     Get Started
                 </x-button-link>

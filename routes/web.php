@@ -19,7 +19,7 @@ use App\Http\Controllers\CustomExpensesDetails;
 use App\Models\Dashboard;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpensesFullController;
-
+use App\Http\Controllers\UserProfileController;
 
 // Root route - check if authenticated, if so redirect to masterfinancial, otherwise show layout
 Route::get('/', function () {
@@ -85,6 +85,10 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/edit-expense-detail/{id}', [MasterFinancialAllController::class, 'editExpenseDetail'])->name('financial.editExpense');
     Route::put('/update-expense-detail/{id}', [MasterFinancialAllController::class, 'updateExpenseDetail'])->name('financial.updateExpense');
+
+    Route::get('/profile', [UserProfileController::class, 'show'])->name('user.profile');
+    Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('user.profile.edit');
+    Route::put('/profile', [UserProfileController::class, 'update'])->name('user.profile.update');
 });
 
 require __DIR__ . '/auth.php';  // Include the auth routes

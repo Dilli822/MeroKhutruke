@@ -94,7 +94,13 @@
 
             <footer class="main-footer">
                 <div class="footer-left">
-                    ©copyright2024 Mero Khutruke
+                <p class="text-sm text-gray-600 dark:text-gray-300">© Copyright <span id="current-year"></span> Mero Khutruke. All Rights Reserved.</p>
+
+<script>
+    // Get the current year
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+
                 </div>
 
                 <div class="footer-right">

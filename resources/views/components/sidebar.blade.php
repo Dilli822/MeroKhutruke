@@ -18,7 +18,7 @@
                 
                 <!-- Profile Section -->
                 <li class="dropdown santo">
-                    <a href="#" class="nav-link"><i data-feather="user-check"></i><span style="color: midnightblue">Profile</span></a>
+                    <a href="{{ route('user.profile') }}" class="nav-link"><i data-feather="user-check"></i><span style="color: midnightblue">Profile</span></a>
                 </li>
 
                 <!-- Income Section -->

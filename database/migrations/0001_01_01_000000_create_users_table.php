@@ -35,6 +35,17 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        // Add user_profiles table
+        Schema::create('user_profiles', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('bio')->nullable(); // Optional: Add bio field
+            $table->string('avatar')->nullable(); // Optional: Add avatar field
+            $table->string('phone')->nullable(); // Optional: Add phone number field
+            $table->string('address')->nullable(); // Optional: Add address field
+            $table->timestamps();
+        });
     }
 
     /**
@@ -42,6 +53,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_profiles');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

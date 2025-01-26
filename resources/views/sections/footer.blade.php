@@ -4,7 +4,13 @@
             <img class="h-20" src="{{ asset('images/mero-khutruke-transparent.PNG') }}" alt="">
         </a>
 
-        <p class="text-sm text-gray-600 dark:text-gray-300">© Copyright 2024 Mero Khutruke. All Rights Reserved.</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">© Copyright <span id="current-year"></span> Mero Khutruke. All Rights Reserved.</p>
+
+<script>
+    // Get the current year
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+
 
         <div class="flex mx-2 justify-center">
             <x-footer-icon url="https://github.com/PappaMYST/MeroKhutruke.git" icon="github"></x-footer-icon>
