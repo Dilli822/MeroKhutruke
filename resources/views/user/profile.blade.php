@@ -18,11 +18,7 @@
                 <!-- User Info -->
                 <h4 class="card-title text-center m-0">{{ Auth::user()->name }}</h4>
                 <p class="text-center text-muted m-0">{{ Auth::user()->email }}</p>
-                <p class=" text-center text-muted m-0">
-    Date Joined: {{ Auth::user()->created_at->format('F j, Y') }}
-</p>
-
-
+                <p class=" text-center text-muted m-0"> Date Joined: {{ Auth::user()->created_at->format('F j, Y') }} </p>
                 <!-- Profile Details -->
                 @if($profile)
                     <div class="mb-4">
